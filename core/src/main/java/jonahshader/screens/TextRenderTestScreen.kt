@@ -3,11 +3,9 @@ package jonahshader.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils.*
-import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.utils.viewport.FitViewport
-import jonahshader.singletons.Assets
-import jonahshader.singletons.TextRenderer
+import jonahshader.systems.ui.TextRenderer
 import ktx.app.KtxScreen
 import ktx.graphics.begin
 

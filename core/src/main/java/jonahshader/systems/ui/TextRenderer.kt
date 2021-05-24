@@ -1,13 +1,13 @@
-package jonahshader.singletons
+package jonahshader.systems.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScalingViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import jonahshader.systems.assets.Assets
 
 object TextRenderer {
     private var batch: Batch? = null
@@ -46,15 +46,15 @@ object TextRenderer {
     }
 
     fun begin(batch: Batch, viewport: ScalingViewport, font: Font, size: Float, boldness: Float) {
-        this.batch = batch
-        this.viewport = viewport
-        this.font = fontToBitmapFont(font)
+        TextRenderer.batch = batch
+        TextRenderer.viewport = viewport
+        TextRenderer.font = fontToBitmapFont(font)
         val scale = calculateScale(size, font)
         val screenScale = viewport.scaling.apply(viewport.worldWidth, viewport.worldHeight, Gdx.graphics.width.toFloat(),
             Gdx.graphics.height.toFloat()
         ).x / viewport.worldWidth
-        this.font!!.setUseIntegerPositions(false)
-        this.font!!.data.setScale(scale)
+        TextRenderer.font!!.setUseIntegerPositions(false)
+        TextRenderer.font!!.data.setScale(scale)
         batch.shader = Assets.dffShader
         Assets.dffShader.setUniformf("p_distOffset", boldness)
         Assets.dffShader.setUniformf("p_spread", fontToSpread(font))
@@ -63,6 +63,13 @@ object TextRenderer {
 
     fun end() {
         batch!!.shader = null
+    }
+
+    fun drawTextCentered(x: Float, y: Float, text: String, shadowDistance: Float, shadowOpacity: Float) {
+        font?.color?.set(0f, 0f, 0f, color.a * shadowOpacity)
+        font?.draw(batch!!, text, x, y + font!!.capHeight/2f, 0f, Align.center, false)
+        updateColor()
+        font?.draw(batch!!, text, x + shadowDistance, y + (font!!.capHeight/2f) + shadowDistance, 0f, Align.center, false)
     }
 
     fun drawTextCentered(x: Float, y: Float, text: String) {

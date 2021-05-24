@@ -1,29 +1,18 @@
-package jonahshader.singletons
+package jonahshader.systems.assets
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
+import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.graphics.g2d.freetype.FreeType
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.utils.Disposable
+import jonahshader.systems.sound.SoundSystem
 
 object Assets : Disposable {
-    // Fonts
-//    private const val LIGHT_FONT = "graphics/fonts/Mont-ExtraLightDEMO.ttf"
-//    private const val LIGHT_FONT_LOAD_SIZE = 36
-//    lateinit var lightFont: BitmapFont
-//
-//    private const val BOLD_FONT = "graphics/fonts/Mont-HeavyDEMO.ttf"
-//    private const val BOLD_FONT_LOAD_SIZE = 36
-//    lateinit var boldFont: BitmapFont
-
     // Fonts
     private const val LIGHT_FONT = "graphics/fonts/light_font"
     const val LIGHT_FONT_SPREAD = 3f
@@ -40,6 +29,13 @@ object Assets : Disposable {
     const val HEAVY_FONT_SIZE = 64f
     private lateinit var heavyFontTexture: Texture
     lateinit var heavyFont: BitmapFont
+
+    // Sounds
+    const val MENU_OPEN_SOUND = "audio/sounds/open.ogg"
+    const val MENU_CLOSE_SOUND = "audio/sounds/close.ogg"
+    const val MENU_MOUSE_OVER_SOUND = "audio/sounds/menu_mouseover.ogg"
+
+    // Music
 
     // Sprites
     private const val SPRITES = "graphics/spritesheets/sprites.atlas"
@@ -59,12 +55,14 @@ object Assets : Disposable {
         loadFonts()
         loadTextures()
         loadShaders()
+        loadSounds()
     }
 
     fun getProgress() : Float = manager.progress
 
     fun finishLoading() {
         manager.finishLoading()
+        SoundSystem.loadMusic()
     }
 
     private fun loadShaders() {
@@ -88,27 +86,17 @@ object Assets : Disposable {
         normalFont = BitmapFont(Gdx.files.internal("$NORMAL_FONT.fnt"), TextureRegion(normalFontTexture), false)
     }
 
-//    private fun loadFonts() {
-////        val resolver = InternalFileHandleResolver()
-////        manager.setLoader(FreeTypeFontGenerator::class.java, FreeTypeFontGeneratorLoader(resolver))
-////        manager.setLoader(BitmapFont::class.java, ".ttf", FreetypeFontLoader(resolver))
-//        var gen = FreeTypeFontGenerator(Gdx.files.internal(LIGHT_FONT))
-//        var param = FreeTypeFontGenerator.FreeTypeFontParameter()
-//        param.size = LIGHT_FONT_LOAD_SIZE
-//        lightFont = gen.generateFont(param)
-//        lightFont.region.texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.MipMapLinearLinear)
-//        gen.dispose()
-//
-//        gen = FreeTypeFontGenerator(Gdx.files.internal(BOLD_FONT))
-//        param = FreeTypeFontGenerator.FreeTypeFontParameter()
-//        param.size = BOLD_FONT_LOAD_SIZE
-//        boldFont = gen.generateFont(param)
-//        boldFont.region.texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.MipMapLinearLinear)
-//        gen.dispose()
-//    }
-
     private fun loadTextures() {
         manager.load(SPRITES, TextureAtlas::class.java)
+    }
+
+    private fun loadSounds() {
+        manager.load(MENU_OPEN_SOUND, Sound::class.java)
+        manager.load(MENU_CLOSE_SOUND, Sound::class.java)
+        manager.load(MENU_MOUSE_OVER_SOUND, Sound::class.java)
+
+//        manager.load(GAME_MUSIC, Music::class.java)
+//        manager.load(MENU_MUSIC, Music::class.java)
     }
 
     override fun dispose() {

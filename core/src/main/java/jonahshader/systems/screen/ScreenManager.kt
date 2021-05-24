@@ -1,4 +1,4 @@
-package jonahshader.singletons
+package jonahshader.systems.screen
 
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Screen
@@ -16,5 +16,11 @@ object ScreenManager {
     fun pop() {
         stack.pop().dispose()
         game.screen = stack.peek()
+    }
+
+    fun switchTo(screen: Screen) {
+        stack.pop().dispose()
+        stack.push(screen)
+        game.screen = screen
     }
 }
