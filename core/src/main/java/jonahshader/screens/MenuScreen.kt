@@ -19,9 +19,13 @@ class MenuScreen : KtxScreen {
     private val menu = Menu(TextRenderer.Font.HEAVY, camera, Vector2(), Vector2(500f, 90f))
 
     init {
-        menu.addMenuItem("Game Generator") {ScreenManager.push(GameGeneratorScreen())}
-        menu.addMenuItem("Settings") { ScreenManager.push(SettingsScreen())}
-        menu.addMenuItem("Exit") { Gdx.app.exit()}
+        with(menu) {
+            addMenuItem("Test Game") {ScreenManager.push(GameScreen())}
+            addMenuItem("Game Generator") {ScreenManager.push(GameGeneratorScreen())}
+            addMenuItem("Settings") { ScreenManager.push(SettingsScreen())}
+            addMenuItem("Exit") { Gdx.app.exit()}
+        }
+
 
         if((Settings.settings["fullscreen"] as String).toBoolean()) Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
     }

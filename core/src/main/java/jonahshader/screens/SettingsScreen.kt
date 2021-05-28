@@ -25,30 +25,33 @@ class SettingsScreen : KtxScreen {
     private val menu = Menu(TextRenderer.Font.HEAVY, camera, Vector2(0f, 900f/6f), Vector2(500f, 90f))
 
     init {
-        menu.addSliderItem("Overall Volume", SoundSystem.overallVolume) {
-            t->SoundSystem.overallVolume = t
-            Settings.settings["overall-volume"] = t.toString()
-            Settings.save()
-        }
-        menu.addSliderItem("Music Volume", SoundSystem.musicVolume) {
-            t->SoundSystem.musicVolume = t
-            Settings.settings["music-volume"] = t.toString()
-            Settings.save()
-        }
-        menu.addSliderItem("Sound Effect Volume", SoundSystem.soundVolume) {
-            t->SoundSystem.soundVolume = t
-            Settings.settings["sound-volume"] = t.toString()
-            Settings.save()
-        }
-        menu.addMenuItem("Fullscreen") {
-            if(!Gdx.graphics.isFullscreen) Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
-            else Gdx.graphics.setWindowedMode(Gdx.graphics.width - 40, Gdx.graphics.height - 40)
+        with (menu) {
+            addSliderItem("Overall Volume", SoundSystem.overallVolume) {
+                    t->SoundSystem.overallVolume = t
+                Settings.settings["overall-volume"] = t.toString()
+                Settings.save()
+            }
+            addSliderItem("Music Volume", SoundSystem.musicVolume) {
+                    t->SoundSystem.musicVolume = t
+                Settings.settings["music-volume"] = t.toString()
+                Settings.save()
+            }
+            addSliderItem("Sound Effect Volume", SoundSystem.soundVolume) {
+                    t->SoundSystem.soundVolume = t
+                Settings.settings["sound-volume"] = t.toString()
+                Settings.save()
+            }
+            addMenuItem("Fullscreen") {
+                if(!Gdx.graphics.isFullscreen) Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
+                else Gdx.graphics.setWindowedMode(Gdx.graphics.width - 40, Gdx.graphics.height - 40)
 
-            Settings.settings["fullscreen"] = Gdx.graphics.isFullscreen.toString()
-            Settings.save()
+                Settings.settings["fullscreen"] = Gdx.graphics.isFullscreen.toString()
+                Settings.save()
 
+            }
+            addMenuItem("Back") { ScreenManager.pop() }
         }
-        menu.addMenuItem("Back") { ScreenManager.pop() }
+
     }
 
     override fun show() {

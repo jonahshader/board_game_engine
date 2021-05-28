@@ -9,14 +9,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.utils.viewport.ScalingViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import jonahklayton.systems.ui.CustomShapes
+import jonahshader.systems.ui.CustomShapes
 import jonahshader.systems.assets.Assets
 import jonahshader.systems.assets.Assets.MENU_MOUSE_OVER_SOUND
 import jonahshader.systems.assets.Assets.MENU_OPEN_SOUND
 import jonahshader.systems.sound.SoundSystem
 import jonahshader.systems.ui.TextRenderer
 import space.earlygrey.shapedrawer.ShapeDrawer
-import kotlin.math.pow
 
 open class MenuItem {
     private val MENU_PADDING = 25

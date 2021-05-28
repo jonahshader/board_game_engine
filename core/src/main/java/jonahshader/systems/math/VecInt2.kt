@@ -31,6 +31,10 @@ data class VecInt2(var x: Int, var y: Int) {
     }
 
     operator fun unaryMinus(): VecInt2 = VecInt2(-x, -y)
+    fun set(to: VecInt2) {
+        x = to.x
+        y = to.y
+    }
 }
 
 val zero = VecInt2(0, 0)

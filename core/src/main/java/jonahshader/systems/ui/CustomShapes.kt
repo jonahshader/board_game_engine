@@ -1,9 +1,14 @@
-package jonahklayton.systems.ui
+package jonahshader.systems.ui
 
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Vector2
 import space.earlygrey.shapedrawer.ShapeDrawer
 
 object CustomShapes {
+//    private var shadowDist = Vector2(1f, 1f)
+//    private var shadowOpacity = .33f
+//    private var shadowCentered = false
+
     fun filledRoundedRect(drawer: ShapeDrawer, x: Float, y: Float, width: Float, height: Float, roundness: Float) {
         drawer.filledRectangle(x, y + roundness, width, height - 2*roundness)
         drawer.filledRectangle(x + roundness, y, width - 2*roundness, roundness)
@@ -13,4 +18,18 @@ object CustomShapes {
         drawer.sector(x + width - roundness, y + height - roundness, roundness, 0f, MathUtils.PI /2, 80)
         drawer.sector(x + roundness, y + height - roundness, roundness, MathUtils.PI /2, MathUtils.PI /2, 80)
     }
+
+//    fun configureShadow(dist: Vector2, opacity: Float, centered: Boolean) {
+//        shadowDist = dist
+//        shadowOpacity = opacity
+//        shadowCentered = centered
+//    }
+
+//    fun filledRoundedRectWithShadowCentered(drawer: ShapeDrawer, x: Float, y: Float, width: Float, height: Float, roundness: Float) {
+//        if (shadowCentered) {
+//
+//        } else {
+//            drawer.packedColor
+//        }
+//    }
 }

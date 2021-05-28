@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.ScalingViewport
 import jonahshader.systems.sound.SoundSystem
-import jonahklayton.systems.ui.CustomShapes
+import jonahshader.systems.ui.CustomShapes
 import jonahshader.systems.assets.Assets
 import jonahshader.systems.ui.TextRenderer
 import space.earlygrey.shapedrawer.ShapeDrawer
