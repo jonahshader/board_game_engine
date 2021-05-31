@@ -18,14 +18,15 @@ class GameScreen : KtxScreen {
 
     init {
         val playerControllers = mutableListOf<PlayerController>()
-        playerControllers += RandomMoveAI(.01f)
         playerControllers += RandomMoveAI(.00f)
-        game = BoardGame(VecInt2(12, 8), playerControllers)
+        playerControllers += RandomMoveAI(.00f)
+        game = BoardGame(VecInt2(8, 8), playerControllers)
 
         boardViewport = FitViewport(Board.TILE_SIZE * game.board.width,
             Board.TILE_SIZE * game.board.height, boardCamera)
 
         val kingKernel = Kernel(VecInt2(3, 3))
+//        val kingKernel = Kernel(VecInt2(13, 13))
         kingKernel.fill()
 
         val knightKernel = Kernel(VecInt2(5, 5))
@@ -34,10 +35,14 @@ class GameScreen : KtxScreen {
         knightKernel.addMirrored(VecInt2(1, -2), true)
         knightKernel.addMirrored(VecInt2(2, -1), true)
 
+        val kingMove = Ability.makeJumpMoveAbility(kingKernel)
+        val kingCapture = Ability.makeJumpCaptureAbility(kingKernel)
+        val knightMove = Ability.makeJumpMoveAbility(knightKernel)
+        val knightCapture = Ability.makeJumpCaptureAbility(knightKernel)
         // add some pieces
-        for (y in 0 until 8) for (x in 0 until 5) {
-            game.addPieceToBoard(listOf(Ability.makeJumpMoveAbility(kingKernel)), 0, "K", VecInt2(x, y))
-            game.addPieceToBoard(listOf(Ability.makeJumpMoveAbility(kingKernel)), 1, "K", VecInt2(x + 7, y))
+        for (y in 0 until 8) for (x in 0 until 4) {
+            game.addPieceToBoard(listOf(knightMove, knightCapture), 0, "N", VecInt2(x, y))
+            game.addPieceToBoard(listOf(kingMove, kingCapture), 1, "K", VecInt2(x + 4, y))
         }
 //        game.addPieceToBoard(listOf(Ability.makeJumpMoveAbility(kingKernel)), 0, "K", VecInt2(2, 2))
 //        game.addPieceToBoard(listOf(Ability.makeJumpMoveAbility(knightKernel)), 0, "N", VecInt2(5, 2))
@@ -48,6 +53,7 @@ class GameScreen : KtxScreen {
     }
 
     override fun render(delta: Float) {
+        game.update()
         boardViewport.apply(true)
         BoardApp.batch.begin(boardCamera)
         game.draw(boardViewport)

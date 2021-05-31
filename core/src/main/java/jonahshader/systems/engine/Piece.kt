@@ -22,31 +22,31 @@ data class Piece(private val abilities: List<Ability>, val ownerID: Int, private
     }
 
     fun isOnSameTeam(otherPiece: Piece) = ownerID == otherPiece.ownerID
-    fun getAllSpecificActions(board: Board): List<SpecificAction> {
+    fun getAllSpecificActions(game: BoardGame): List<SpecificAction> {
         val actions = mutableListOf<SpecificAction>()
         abilities.forEach { ability ->
-            ability.getAllValidActionPos(board, this).forEach { actionPos ->
-                actions += ability.makeSpecificAction(board, actionPos, this)
+            ability.getAllValidActionPos(game, this).forEach { actionPos ->
+                actions += ability.makeSpecificAction(game, actionPos, this)
             }
         }
         return actions
     }
 
-    fun getAllValidActionPos(board: Board): List<ActionPos> {
+    fun getAllValidActionPos(game: BoardGame): List<ActionPos> {
         val actions = mutableListOf<ActionPos>()
         abilities.forEach { ability ->
-            actions += ability.getAllValidActionPos(board, this)
+            actions += ability.getAllValidActionPos(game, this)
         }
         return actions
     }
 
 //    fun getAllActionPositions()
 
-    fun makeMove(movePos: VecInt2, board: Board) {
+    fun makeMove(movePos: VecInt2, game: BoardGame) {
         // figure out which ability contains a valid move at movePos
         for (a in abilities) {
-            if (a.actionValid(board, movePos, this)) {
-                a.action(board, movePos, this)
+            if (a.actionValid(game, movePos, this)) {
+                a.action(game, movePos, this)
                 break
             }
         }
@@ -65,9 +65,9 @@ data class Piece(private val abilities: List<Ability>, val ownerID: Int, private
         TextRenderer.end()
     }
 
-    fun drawValidMoveTiles(board: Board) {
+    fun drawValidMoveTiles(game: BoardGame) {
         BoardApp.shapeDrawer.setColor(1f, 1f, 0f, 1f)
-        getAllValidActionPos(board).forEach {
+        getAllValidActionPos(game).forEach {
             val x = it.x * Board.TILE_SIZE
             val y = it.y * Board.TILE_SIZE
             CustomShapes.filledRoundedRect(BoardApp.shapeDrawer, x + padding, y + padding, Board.TILE_SIZE - padding * 2, Board.TILE_SIZE - padding * 2, roundness)

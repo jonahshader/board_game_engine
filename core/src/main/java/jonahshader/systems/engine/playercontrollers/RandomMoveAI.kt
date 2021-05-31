@@ -4,20 +4,19 @@ import jonahshader.systems.engine.*
 import kotlin.concurrent.thread
 
 class RandomMoveAI(private val waitTime: Float): PlayerController {
-    override fun requestMove(id: Int, pieces: List<Piece>, game: BoardGame) {
-        thread {
-            Thread.sleep((waitTime * 500).toLong())
-            val pieceActionPairs = mutableListOf<Pair<Piece, ActionPos>>()
-            pieces.forEach {
-                it.getAllValidActionPos(game.board).forEach { actionPos ->
-                    pieceActionPairs += Pair(it, actionPos)
-                }
-            }
+    override fun requestMove(id: Int, player: Player, game: BoardGame) {
+        if (waitTime == 0f) {
+            val action = player.getAllMoves().random()
+            game.queueMove(action.first.pos, action.second)
+        } else {
+            thread {
+                Thread.sleep((waitTime * 1000).toLong())
 
-            Thread.sleep((waitTime * 500).toLong())
-            val action = pieceActionPairs.random()
-            game.makeMove(action.first.pos, action.second)
+                val action = player.getAllMoves().random()
+                game.queueMove(action.first.pos, action.second)
+            }
         }
+
     }
 
     override fun notifyGameResult(win: Boolean) {

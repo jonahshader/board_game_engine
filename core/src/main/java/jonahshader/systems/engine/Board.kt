@@ -34,10 +34,6 @@ class Board(private val size: VecInt2) {
         piece.pos.set(to)
     }
 
-//    fun capturePiece(piece: Piece, to: VecInt2) {
-//
-//    }
-
     fun draw() {
         for (y in 0 until height) for (x in 0 until width) {
             BoardApp.shapeDrawer.filledRectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, if ((x + y) % 2 == 0) darkTileColor else lightTileColor)
