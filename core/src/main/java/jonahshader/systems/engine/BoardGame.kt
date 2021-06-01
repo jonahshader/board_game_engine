@@ -19,6 +19,7 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>,
     private var winner = -1
     private var gameOver = false
 
+
     init {
         controllers.forEachIndexed {index, controller -> players += Player(index, controller, this, when(index) {
             0 -> Color(.3f, .9f, .9f, 1f)
@@ -65,10 +66,12 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>,
     }
 
     fun update() {
-        assert(moveQueue.size <= 1)
-        if (!gameOver && moveQueue.size == 1) synchronized(moveQueue) {
+        assert(moveQueue.size <= 1) { "SHIT. theres ${moveQueue.size} things in that queue" }
+        var queueNextMove = false
+        synchronized(moveQueue) {
+            if (!gameOver && moveQueue.size == 1) {
 //            moveQueue.forEach {
-            val it = moveQueue[0]
+                val it = moveQueue[0]
                 makeMove(it.first, it.second)
                 checkLose()
                 checkWin()
@@ -76,17 +79,19 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>,
                 if (gameOver) {
                     moveQueue.clear()
                     println("PlayerID $winner won!")
+                    players.forEach { it.notifyGameOver(winner) }
+
                     return@update
                 }
-
-//            }
-
+                queueNextMove = true
+            }
             moveQueue.clear()
-
         }
-        if (!gameOver) {
+
+        if (!gameOver && queueNextMove) {
             players[playerTurn].requestMove()
         }
+
     }
 
     private fun checkDraw() {

@@ -77,6 +77,7 @@ data class Ability(val action: Action, val actionValid: ActionValid, val getAllV
                         if (game.board.getPiece(o + piece.pos) != null) break
                         if (o == relativePos) {
                             valid = true
+                            break
                         }
                     }
                 }
@@ -87,8 +88,11 @@ data class Ability(val action: Action, val actionValid: ActionValid, val getAllV
                 val validActionPositions = mutableListOf<ActionPos>()
                 kernels.forEach { kernel ->
                     for (p in kernel.makeGlobalPosList(piece.pos)) {
-                        if (!(game.board.posIsOnBoard(p) && game.board.getPiece(p) == null)) break
-                        validActionPositions += p
+                        if (game.board.posIsOnBoard(p) && game.board.getPiece(p) == null) {
+                            validActionPositions += p
+                        } else {
+                            break
+                        }
                     }
                 }
                 validActionPositions
@@ -97,10 +101,60 @@ data class Ability(val action: Action, val actionValid: ActionValid, val getAllV
             return Ability(action, actionValid, getAllValidActionPos)
         }
 
-//        fun makeSlideCaptureAbility(kernels: List<Kernel>): Ability {
-//            val action: Action = { board, actionPos, piece ->
-//                board.movePiece(piece, actionPos)
-//            }
-//        }
+        fun makeSlideCaptureAbility(kernels: List<Kernel>): Ability {
+            val action: Action = { game, actionPos, piece ->
+                game.capturePiece(piece, actionPos)
+            }
+
+            val actionValid: ActionValid = {game, actionPos, piece ->
+                val relativePos = actionPos - piece.pos
+                var kernel: Kernel? = null
+                for (k in kernels) {
+                    if (k.offsets.contains(relativePos)) {
+                        kernel = k
+                        break
+                    }
+                }
+                var valid = false
+                if (game.board.posIsOnBoard(actionPos) && kernel != null) {
+                    for (i in kernel.offsets.indices) {
+                        val o = kernel.offsets[i]
+                        if (o == relativePos) {
+                            val atPos = game.board.getPiece(o + piece.pos)
+                            if (atPos == null) break
+                            else if (atPos.isOnSameTeam(piece)) break
+                            valid = true
+                            break
+                        }
+                        if (game.board.getPiece(o + piece.pos) != null) break
+                    }
+                }
+                valid
+            }
+
+            val getAllValidActionPos: GetAllValidActionPos = { game, piece ->
+                val validActionPositions = mutableListOf<ActionPos>()
+                kernels.forEach { kernel ->
+                    loop@ for (p in kernel.makeGlobalPosList(piece.pos)) {
+                        if (game.board.posIsOnBoard(p)) {
+                            val atPos = game.board.getPiece(p)
+                            if (atPos == null) {
+                                validActionPositions += p
+                            } else if (!atPos.isOnSameTeam(piece)){
+                                validActionPositions += p
+                                break@loop
+                            } else {
+                                break@loop
+                            }
+                        } else {
+                            break@loop
+                        }
+                    }
+                }
+                validActionPositions
+            }
+
+            return Ability(action, actionValid, getAllValidActionPos)
+        }
     }
 }

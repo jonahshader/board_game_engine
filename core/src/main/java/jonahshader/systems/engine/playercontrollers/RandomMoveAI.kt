@@ -19,7 +19,7 @@ class RandomMoveAI(private val waitTime: Float): PlayerController {
 
     }
 
-    override fun notifyGameResult(win: Boolean) {
+    override fun notifyGameResult(winner: Float) {
         // dont care lol
     }
 }

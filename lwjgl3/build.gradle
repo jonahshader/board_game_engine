@@ -19,7 +19,8 @@ import org.gradle.internal.os.OperatingSystem
 run {
 	workingDir = rootProject.file('assets').path
 	setIgnoreExitValue(true)
-	
+
+	jvmArgs += "-ea"
 	if (OperatingSystem.current() == OperatingSystem.MAC_OS) {
 		// Required to run LWJGL3 Java apps on MacOS
 		jvmArgs += "-XstartOnFirstThread"

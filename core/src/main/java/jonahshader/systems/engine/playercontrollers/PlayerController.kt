@@ -6,5 +6,5 @@ import jonahshader.systems.engine.Player
 
 interface PlayerController {
     fun requestMove(id: Int, player: Player, game: BoardGame)
-    fun notifyGameResult(win: Boolean)
+    fun notifyGameResult(win: Float)
 }

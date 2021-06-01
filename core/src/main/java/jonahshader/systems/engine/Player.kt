@@ -36,6 +36,15 @@ class Player(val id: Int, private val controller: PlayerController, private val 
         rawPieces += piece
     }
 
+    fun notifyGameOver(winner: Int) {
+        if (winner >= 0) {
+            controller.notifyGameResult(if(winner == id) 1f else 0f)
+        } else {
+            controller.notifyGameResult(.5f) // tie
+        }
+
+    }
+
     fun removePiece(toRemove: Piece) {
         rawPieces -= toRemove
     }
