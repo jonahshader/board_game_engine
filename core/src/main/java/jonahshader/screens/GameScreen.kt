@@ -19,7 +19,7 @@ class GameScreen : KtxScreen {
 
     init {
         val playerControllers = mutableListOf<PlayerController>()
-        playerControllers += RandomMoveAI(0f)
+        playerControllers += RandomMoveAI(.5f)
         playerControllers += RandomMoveAI(.5f)
         game = makeChessGame(playerControllers[0], playerControllers[1])
 

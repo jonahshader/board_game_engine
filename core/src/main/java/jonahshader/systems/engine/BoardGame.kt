@@ -45,7 +45,7 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>,
         if (playerTurn >= players.size) playerTurn -= players.size
     }
 
-    fun addPieceToBoard(abilities: List<Ability>, playerID: Int, symbol: String, pos: VecInt2) {
+    fun addPieceToBoard(abilities: MutableList<Ability>, playerID: Int, symbol: String, pos: VecInt2) {
         val piece = Piece(abilities, playerID, symbol, players[playerID].color, pos)
         players[piece.ownerID].addPiece(piece)
         board.addPiece(piece)

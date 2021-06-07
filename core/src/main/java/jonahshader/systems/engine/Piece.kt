@@ -6,8 +6,9 @@ import jonahshader.BoardApp
 import jonahshader.systems.math.VecInt2
 import jonahshader.systems.ui.CustomShapes
 import jonahshader.systems.ui.TextRenderer
+import ktx.graphics.copy
 
-data class Piece(private val abilities: List<Ability>, val ownerID: Int, private val symbol: String, private val bodyColor: Color, val pos: VecInt2) {
+data class Piece(val abilities: MutableList<Ability>, val ownerID: Int, private val symbol: String, private val bodyColor: Color, val pos: VecInt2) {
     private val roundness = Board.TILE_SIZE / 6
     private val padding = Board.TILE_SIZE / 12
     private val shadowDist = Board.TILE_SIZE / 16
@@ -46,7 +47,7 @@ data class Piece(private val abilities: List<Ability>, val ownerID: Int, private
         // figure out which ability contains a valid move at movePos
         for (a in abilities) {
             if (a.actionValid(game, movePos, this)) {
-                a.action(game, movePos, this)
+                a.action(game, movePos, this, a)
                 break
             }
         }
@@ -73,4 +74,6 @@ data class Piece(private val abilities: List<Ability>, val ownerID: Int, private
             CustomShapes.filledRoundedRect(BoardApp.shapeDrawer, x + padding, y + padding, Board.TILE_SIZE - padding * 2, Board.TILE_SIZE - padding * 2, roundness)
         }
     }
+
+    fun makeCopy() = Piece(abilities, ownerID, symbol, bodyColor, VecInt2(pos))
 }

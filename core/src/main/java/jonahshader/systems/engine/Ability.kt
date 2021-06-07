@@ -6,17 +6,17 @@ typealias ActionPos = VecInt2
 
 // assuming desired action was either verified by
 // ActionValid or it came from GetAlloValidActions
-typealias Action = (BoardGame, ActionPos, Piece) -> Unit
+typealias Action = (BoardGame, ActionPos, Piece, Ability) -> Unit
 typealias ActionValid = (BoardGame, ActionPos, Piece) -> Boolean
 typealias GetAllValidActionPos = (BoardGame, Piece) -> List<ActionPos>
 typealias SpecificAction = (Unit) -> Unit
-data class Ability(val action: Action, val actionValid: ActionValid, val getAllValidActionPos: GetAllValidActionPos) {
-    fun makeSpecificAction(game: BoardGame, actionPos: ActionPos, piece: Piece): SpecificAction = {action(game, actionPos, piece)}
+data class Ability(var action: Action, var actionValid: ActionValid, var getAllValidActionPos: GetAllValidActionPos) {
+    fun makeSpecificAction(game: BoardGame, actionPos: ActionPos, piece: Piece): SpecificAction = {action(game, actionPos, piece, this)}
 
     companion object {
         // e.g. the knight "jumps" over pieces. bishops do not.
         fun makeJumpMoveAbility(kernel: Kernel): Ability {
-            val action: Action = { game, actionPos, piece ->
+            val action: Action = { game, actionPos, piece, _ ->
                 game.board.movePiece(piece, actionPos)
             }
 
@@ -36,7 +36,7 @@ data class Ability(val action: Action, val actionValid: ActionValid, val getAllV
         }
 
         fun makeJumpCaptureAbility(kernel: Kernel): Ability {
-            val action: Action = { game, actionPos, piece ->
+            val action: Action = { game, actionPos, piece, _ ->
 //                game.board.movePiece(piece, actionPos)
 //                game
                 game.capturePiece(piece, actionPos)
@@ -58,7 +58,7 @@ data class Ability(val action: Action, val actionValid: ActionValid, val getAllV
         }
 
         fun makeSlideMoveAbility(kernels: List<Kernel>): Ability {
-            val action: Action = { game, actionPos, piece ->
+            val action: Action = { game, actionPos, piece, _ ->
                 game.board.movePiece(piece, actionPos)
             }
 
@@ -102,7 +102,7 @@ data class Ability(val action: Action, val actionValid: ActionValid, val getAllV
         }
 
         fun makeSlideCaptureAbility(kernels: List<Kernel>): Ability {
-            val action: Action = { game, actionPos, piece ->
+            val action: Action = { game, actionPos, piece, _ ->
                 game.capturePiece(piece, actionPos)
             }
 

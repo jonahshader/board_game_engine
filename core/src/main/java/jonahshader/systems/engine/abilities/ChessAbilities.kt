@@ -2,21 +2,35 @@ package jonahshader.systems.engine.abilities
 
 import jonahshader.systems.engine.Ability
 import jonahshader.systems.engine.Kernel
+import jonahshader.systems.engine.changeAbilityAfterMove
 import jonahshader.systems.math.VecInt2
 
 // TODO: make pieces able to swap out ability after a condition is met. e.g. pawns will switch move kernels after first move
 // TODO: also need to figure out a general mechanism for enable things like en passant and castling. some interaction with other pieces is required.
-fun makePawnAbilities(white: Boolean): List<Ability> {
+fun makePawnAbilities(white: Boolean): MutableList<Ability> {
     val direction = if (white) 1 else -1
-    val moveKernel = Kernel(VecInt2(3, 3))
-    moveKernel += VecInt2(0, direction)
+
+    val firstMoveKernel = Kernel(VecInt2(5, 5))
+    firstMoveKernel += VecInt2(0, direction)
+    firstMoveKernel += VecInt2(0, direction * 2)
+
+    val secondMoveKernel = Kernel(VecInt2(3, 3))
+    secondMoveKernel += VecInt2(0, direction)
+
     val captureKernel = Kernel(VecInt2(3, 3))
     captureKernel += VecInt2(-1, direction)
     captureKernel += VecInt2(1, direction)
-    return listOf(Ability.makeJumpMoveAbility(moveKernel), Ability.makeJumpCaptureAbility(captureKernel))
+
+    val firstMoveAbility = Ability.makeSlideMoveAbility(listOf(firstMoveKernel))
+    val secondMoveAbility = Ability.makeJumpMoveAbility(secondMoveKernel)
+    val secondCaptureAbility = Ability.makeJumpCaptureAbility(captureKernel)
+
+    val moveAbility = changeAbilityAfterMove(firstMoveAbility, secondMoveAbility)
+
+    return mutableListOf(moveAbility, secondCaptureAbility)
 }
 
-fun makeRookAbilities(boardSize: Int): List<Ability> {
+fun makeRookAbilities(boardSize: Int): MutableList<Ability> {
     val kernels = mutableListOf<Kernel>()
     kernels += Kernel(VecInt2(boardSize * 2 - 1, boardSize * 2 - 1))
     kernels.last().addLine(boardSize, VecInt2(-1, 0))
@@ -27,26 +41,26 @@ fun makeRookAbilities(boardSize: Int): List<Ability> {
     kernels += Kernel(VecInt2(boardSize * 2 - 1, boardSize * 2 - 1))
     kernels.last().addLine(boardSize, VecInt2(0, 1))
 
-    return listOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
+    return mutableListOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
 }
 
-fun makeKnightAbilities(): List<Ability> {
+fun makeKnightAbilities(): MutableList<Ability> {
     val knightKernel = Kernel(VecInt2(5, 5))
     knightKernel.addMirrored(VecInt2(1, 2), true)
     knightKernel.addMirrored(VecInt2(2, 1), true)
     knightKernel.addMirrored(VecInt2(1, -2), true)
     knightKernel.addMirrored(VecInt2(2, -1), true)
 
-    return listOf(Ability.makeJumpMoveAbility(knightKernel), Ability.makeJumpCaptureAbility(knightKernel))
+    return mutableListOf(Ability.makeJumpMoveAbility(knightKernel), Ability.makeJumpCaptureAbility(knightKernel))
 }
 
-fun makeKingAbilities(): List<Ability> {
+fun makeKingAbilities(): MutableList<Ability> {
     val kingKernel = Kernel(VecInt2(3, 3))
     kingKernel.fill()
-    return listOf(Ability.makeJumpMoveAbility(kingKernel), Ability.makeJumpCaptureAbility(kingKernel))
+    return mutableListOf(Ability.makeJumpMoveAbility(kingKernel), Ability.makeJumpCaptureAbility(kingKernel))
 }
 
-fun makeBishopAbilities(boardSize: Int): List<Ability> {
+fun makeBishopAbilities(boardSize: Int): MutableList<Ability> {
     val kernels = mutableListOf<Kernel>()
     kernels += Kernel(VecInt2(boardSize * 2 - 1, boardSize * 2 - 1))
     kernels.last().addLine(8, VecInt2(1, 1))
@@ -57,10 +71,10 @@ fun makeBishopAbilities(boardSize: Int): List<Ability> {
     kernels += Kernel(VecInt2(boardSize * 2 - 1, boardSize * 2 - 1))
     kernels.last().addLine(8, VecInt2(-1, -1))
 
-    return listOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
+    return mutableListOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
 }
 
-fun makeQueenAbilities(boardSize: Int): List<Ability> {
+fun makeQueenAbilities(boardSize: Int): MutableList<Ability> {
     val kernels = mutableListOf<Kernel>()
     kernels += Kernel(VecInt2(boardSize * 2 - 1, boardSize * 2 - 1))
     kernels.last().addLine(8, VecInt2(1, 1))
@@ -79,5 +93,5 @@ fun makeQueenAbilities(boardSize: Int): List<Ability> {
     kernels += Kernel(VecInt2(boardSize * 2 - 1, boardSize * 2 - 1))
     kernels.last().addLine(boardSize, VecInt2(0, 1))
 
-    return listOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
+    return mutableListOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
 }
