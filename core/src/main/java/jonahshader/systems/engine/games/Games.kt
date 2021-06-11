@@ -5,8 +5,8 @@ import jonahshader.systems.engine.abilities.*
 import jonahshader.systems.engine.playercontrollers.PlayerController
 import jonahshader.systems.math.VecInt2
 
-fun makeChessGame(player1Controller: PlayerController, player2Controller: PlayerController): BoardGame {
-    val game = BoardGame(VecInt2(8, 8), listOf(player1Controller, player2Controller))
+fun makeChessGame(player1Controller: PlayerController, player2Controller: PlayerController, moveTime: Float = .25f): BoardGame {
+    val game = BoardGame(VecInt2(8, 8), listOf(player1Controller, player2Controller), moveTime)
 
     val queenAbilities = makeQueenAbilities(8)
     val rookAbilities = makeRookAbilities(8)

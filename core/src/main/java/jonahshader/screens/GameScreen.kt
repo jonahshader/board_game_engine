@@ -19,9 +19,9 @@ class GameScreen : KtxScreen {
 
     init {
         val playerControllers = mutableListOf<PlayerController>()
-        playerControllers += RandomMoveAI(.5f)
-        playerControllers += RandomMoveAI(.5f)
-        game = makeChessGame(playerControllers[0], playerControllers[1])
+        playerControllers += RandomMoveAI(1f)
+        playerControllers += RandomMoveAI(1f)
+        game = makeChessGame(playerControllers[0], playerControllers[1], .5f)
 
         boardViewport = FitViewport(Board.TILE_SIZE * game.board.width,
             Board.TILE_SIZE * game.board.height, boardCamera)
@@ -32,7 +32,7 @@ class GameScreen : KtxScreen {
         game.update()
         boardViewport.apply(true)
         BoardApp.batch.begin(boardCamera)
-        game.draw(boardViewport)
+        game.draw(boardViewport, delta)
         BoardApp.batch.end()
     }
 

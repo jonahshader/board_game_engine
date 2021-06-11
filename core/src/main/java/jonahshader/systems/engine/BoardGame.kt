@@ -8,7 +8,7 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 // manages a game. contains players and board. keeps track of who's turn it is and makes move requests
-class BoardGame(size: VecInt2, controllers: List<PlayerController>,
+class BoardGame(size: VecInt2, controllers: List<PlayerController>, private val moveTime: Float = .25f,
                 private val loseCondition: LoseCondition = missingAllPiecesLoseCondition,
                 private val drawCondition: DrawCondition = noMoveDraw) {
     val board = Board(size)
@@ -57,12 +57,12 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>,
         board.movePiece(piece, to)
     }
 
-    fun draw(viewport: ScalingViewport) {
+    fun draw(viewport: ScalingViewport, dt: Float) {
         // draw board
         board.draw()
 
         // draw pieces
-        players.forEach { it.draw(viewport) }
+        players.forEach { it.draw(viewport, dt, moveTime) }
     }
 
     fun update() {

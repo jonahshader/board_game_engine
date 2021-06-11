@@ -1,6 +1,7 @@
 package jonahshader.systems.engine
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.utils.viewport.ScalingViewport
 import jonahshader.BoardApp
 import jonahshader.systems.math.VecInt2
@@ -8,11 +9,20 @@ import jonahshader.systems.ui.CustomShapes
 import jonahshader.systems.ui.TextRenderer
 import ktx.graphics.copy
 
-data class Piece(val abilities: MutableList<Ability>, val ownerID: Int, private val symbol: String, private val bodyColor: Color, val pos: VecInt2) {
+class Piece(
+    val abilities: MutableList<Ability>,
+    val ownerID: Int,
+    private val symbol: String,
+    private val bodyColor: Color,
+    val pos: VecInt2
+) {
     private val roundness = Board.TILE_SIZE / 6
     private val padding = Board.TILE_SIZE / 12
     private val shadowDist = Board.TILE_SIZE / 16
     private val shadowOpacity = .33f
+
+    private val pPos = VecInt2(pos)
+    private var moveProgress = 0f
 
     private val textColor = Color(1f, 1f, 1f, 1f)
 
@@ -53,9 +63,21 @@ data class Piece(val abilities: MutableList<Ability>, val ownerID: Int, private 
         }
     }
 
-    fun draw(viewport: ScalingViewport) {
-        val x = pos.x * Board.TILE_SIZE
-        val y = pos.y * Board.TILE_SIZE
+    fun move(newPos: VecInt2) {
+        pPos.set(pos)
+        pos.set(newPos)
+        moveProgress = 0f
+    }
+
+    fun draw(viewport: ScalingViewport, dt: Float, moveTime: Float) {
+        val px = pPos.x * Board.TILE_SIZE
+        val py = pPos.y * Board.TILE_SIZE
+        val cx = pos.x * Board.TILE_SIZE
+        val cy = pos.y * Board.TILE_SIZE
+
+        val x = Interpolation.pow2.apply(px, cx, moveProgress)
+        val y = Interpolation.pow2.apply(py, cy, moveProgress)
+
         BoardApp.shapeDrawer.setColor(0f, 0f, 0f, shadowOpacity)
         CustomShapes.filledRoundedRect(BoardApp.shapeDrawer, x + padding - shadowDist, y + padding - shadowDist, Board.TILE_SIZE - padding * 2, Board.TILE_SIZE - padding * 2, roundness)
         BoardApp.shapeDrawer.setColor(bodyColor)
@@ -64,6 +86,13 @@ data class Piece(val abilities: MutableList<Ability>, val ownerID: Int, private 
         TextRenderer.color = textColor
         TextRenderer.drawTextCentered(x + Board.TILE_SIZE / 2f, y + Board.TILE_SIZE / 2f, symbol, Board.TILE_SIZE / 32, .33f)
         TextRenderer.end()
+
+        if (moveTime == 0.0f) {
+            moveProgress = 1f
+        } else {
+            moveProgress += dt / moveTime
+            moveProgress = moveProgress.coerceAtMost(1f)
+        }
     }
 
     fun drawValidMoveTiles(game: BoardGame) {

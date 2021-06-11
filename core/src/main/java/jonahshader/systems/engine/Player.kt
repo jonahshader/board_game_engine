@@ -27,9 +27,9 @@ class Player(val id: Int, private val controller: PlayerController, private val 
         return pieceActionPairs
     }
 
-    fun draw(viewport: ScalingViewport) {
+    fun draw(viewport: ScalingViewport, dt: Float, moveTime: Float) {
 //        pieces.forEach{it.drawValidMoveTiles(game.board)}
-        pieces.forEach{it.draw(viewport)}
+        pieces.forEach{it.draw(viewport, dt, moveTime)}
     }
 
     fun addPiece(piece: Piece) {

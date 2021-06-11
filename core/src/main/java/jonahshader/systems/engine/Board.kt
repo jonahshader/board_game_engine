@@ -31,7 +31,7 @@ class Board(private val size: VecInt2) {
     fun movePiece(piece: Piece, to: VecInt2) {
         setPiece(to, piece)
         setPiece(piece.pos, null)
-        piece.pos.set(to)
+        piece.move(to)
     }
 
     fun draw() {
