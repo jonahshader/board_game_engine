@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport
 import jonahshader.systems.engine.playercontrollers.PlayerController
 import jonahshader.systems.math.VecInt2
 
+typealias Move = Pair<Piece, ActionPos>
 class Player(val id: Int, private val controller: PlayerController, private val game: BoardGame, val color: Color) {
     private val rawPieces: MutableList<Piece> = mutableListOf()
     val pieces: List<Piece>
@@ -16,7 +17,7 @@ class Player(val id: Int, private val controller: PlayerController, private val 
         controller.requestMove(id, this, game)
     }
 
-    fun getAllMoves(): List<Pair<Piece, ActionPos>> {
+    fun getAllMoves(): List<Move> {
         val pieceActionPairs = mutableListOf<Pair<Piece, ActionPos>>()
         pieces.forEach {
             it.getAllValidActionPos(game).forEach { actionPos ->

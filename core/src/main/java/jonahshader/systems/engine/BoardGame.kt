@@ -8,25 +8,48 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 // manages a game. contains players and board. keeps track of who's turn it is and makes move requests
-class BoardGame(size: VecInt2, controllers: List<PlayerController>, private val moveTime: Float = .25f,
-                private val loseCondition: LoseCondition = missingAllPiecesLoseCondition,
-                private val drawCondition: DrawCondition = noMoveDraw) {
-    val board = Board(size)
+class BoardGame {
+    val board: Board
     val players = mutableListOf<Player>()
     private var playerTurn = 0
     private val moveQueue = Collections.synchronizedList(ArrayList<Pair<VecInt2, VecInt2>>())
+    private val moveTime: Float
+    var loseCondition: LoseCondition
+    var drawCondition: DrawCondition
+
 
     private var winner = -1
     private var gameOver = false
 
-
-    init {
+    constructor(size: VecInt2, controllers: List<PlayerController>, moveTime: Float = .25f,
+    loseCondition: LoseCondition = missingAllPiecesLoseCondition,
+    drawCondition: DrawCondition = noMoveDraw) {
+        this.moveTime = moveTime
+        this.loseCondition = loseCondition
+        this.drawCondition = drawCondition
+        board = Board(size)
         controllers.forEachIndexed {index, controller -> players += Player(index, controller, this, when(index) {
             0 -> Color(.3f, .9f, .9f, 1f)
             1 -> Color(.6f, .1f, .1f, 1f)
             else -> Color(.5f, .5f, .5f, 1f)
         })}
     }
+
+    // copy constructor for ai
+    constructor(toCopy: BoardGame, newControllers: List<PlayerController>) {
+        moveTime = 0f
+        loseCondition = toCopy.loseCondition
+        drawCondition = toCopy.drawCondition
+        playerTurn = toCopy.playerTurn
+        board = Board(toCopy.board)
+        newControllers.forEachIndexed {index, controller -> players += Player(index, controller, this, when(index) {
+            0 -> Color(.3f, .9f, .9f, 1f)
+            1 -> Color(.6f, .1f, .1f, 1f)
+            else -> Color(.5f, .5f, .5f, 1f)
+        })}
+    }
+
+
 
     fun startGame() {
         players[0].requestMove()
@@ -45,10 +68,11 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>, private val 
         if (playerTurn >= players.size) playerTurn -= players.size
     }
 
-    fun addPieceToBoard(abilities: MutableList<Ability>, playerID: Int, symbol: String, pos: VecInt2) {
+    fun addPieceToBoard(abilities: MutableList<Ability>, playerID: Int, symbol: String, pos: VecInt2): Piece {
         val piece = Piece(abilities, playerID, symbol, players[playerID].color, pos)
         players[piece.ownerID].addPiece(piece)
         board.addPiece(piece)
+        return piece
     }
 
     fun capturePiece(piece: Piece, to: VecInt2) {
@@ -78,7 +102,8 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>, private val 
                 checkDraw()
                 if (gameOver) {
                     moveQueue.clear()
-                    println("PlayerID $winner won!")
+                    if (winner == 1)
+                        println("PlayerID $winner won!")
                     players.forEach { it.notifyGameOver(winner) }
 
                     return@update
@@ -92,6 +117,13 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>, private val 
             players[playerTurn].requestMove()
         }
 
+    }
+
+    fun finishGame(): Int {
+        while (!gameOver) {
+            update()
+        }
+        return winner
     }
 
     private fun checkDraw() {
@@ -121,5 +153,9 @@ class BoardGame(size: VecInt2, controllers: List<PlayerController>, private val 
             winner = winnerID
             gameOver = true
         }
+    }
+
+    fun getCurrentPlayer(): Player {
+        return players[playerTurn]
     }
 }

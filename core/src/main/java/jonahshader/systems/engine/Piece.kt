@@ -9,27 +9,56 @@ import jonahshader.systems.ui.CustomShapes
 import jonahshader.systems.ui.TextRenderer
 import ktx.graphics.copy
 
-class Piece(
-    val abilities: MutableList<Ability>,
-    val ownerID: Int,
-    private val symbol: String,
-    private val bodyColor: Color,
-    val pos: VecInt2
-) {
+class Piece{
     private val roundness = Board.TILE_SIZE / 6
     private val padding = Board.TILE_SIZE / 12
     private val shadowDist = Board.TILE_SIZE / 16
     private val shadowOpacity = .33f
 
-    private val pPos = VecInt2(pos)
+    private val pPos: VecInt2
     private var moveProgress = 0f
 
     private val textColor = Color(1f, 1f, 1f, 1f)
 
-    init {
+    val abilities: MutableList<Ability>
+    val ownerID: Int
+    private val symbol: String
+    private val bodyColor: Color
+    val pos: VecInt2
+
+    constructor(    abilities: MutableList<Ability>,
+                    ownerID: Int,
+                    symbol: String,
+                    bodyColor: Color,
+                    pos: VecInt2) {
+        this.abilities = abilities
+        this.ownerID = ownerID
+        this.symbol = symbol
+        this.bodyColor = bodyColor
+        this.pos = pos
+        pPos = VecInt2(pos)
+
         textColor.r = textColor.r * .5f + bodyColor.r * .5f
         textColor.g = textColor.g * .5f + bodyColor.g * .5f
         textColor.b = textColor.b * .5f + bodyColor.b * .5f
+    }
+
+    // copy constructor
+    constructor(toCopy: Piece) {
+        abilities = mutableListOf()
+        ownerID = toCopy.ownerID
+        symbol = toCopy.symbol
+        bodyColor = toCopy.bodyColor
+        pos = VecInt2(toCopy.pos)
+        pPos = VecInt2(toCopy.pPos)
+
+        textColor.r = toCopy.textColor.r
+        textColor.g = toCopy.textColor.g
+        textColor.b = toCopy.textColor.b
+
+        for (a in toCopy.abilities) {
+            abilities += Ability(a)
+        }
     }
 
     fun isOnSameTeam(otherPiece: Piece) = ownerID == otherPiece.ownerID

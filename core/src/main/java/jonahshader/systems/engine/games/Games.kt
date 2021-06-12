@@ -2,6 +2,7 @@ package jonahshader.systems.engine.games
 
 import jonahshader.systems.engine.BoardGame
 import jonahshader.systems.engine.abilities.*
+import jonahshader.systems.engine.makePieceCaptureLoseCondition
 import jonahshader.systems.engine.playercontrollers.PlayerController
 import jonahshader.systems.math.VecInt2
 
@@ -35,9 +36,10 @@ fun makeChessGame(player1Controller: PlayerController, player2Controller: Player
     game.addPieceToBoard(bishopAbilities, 1, "B", VecInt2(2, 7))
     game.addPieceToBoard(bishopAbilities, 1, "B", VecInt2(5, 7))
     game.addPieceToBoard(queenAbilities, 0, "Q", VecInt2(3, 0))
-    game.addPieceToBoard(kingAbilities, 0, "K", VecInt2(4, 0))
+    val king0 = game.addPieceToBoard(kingAbilities, 0, "K", VecInt2(4, 0))
     game.addPieceToBoard(queenAbilities, 1, "Q", VecInt2(3, 7))
-    game.addPieceToBoard(kingAbilities, 1, "K", VecInt2(4, 7))
+    val king1 = game.addPieceToBoard(kingAbilities, 1, "K", VecInt2(4, 7))
 
+    game.loseCondition = makePieceCaptureLoseCondition(listOf(listOf(king0), listOf(king1)))
     return game
 }

@@ -4,10 +4,12 @@ import com.badlogic.gdx.graphics.Color
 import jonahshader.BoardApp
 import jonahshader.systems.math.VecInt2
 
-class Board(private val size: VecInt2) {
+class Board{
     companion object {
         const val TILE_SIZE = 16f
     }
+    private val size: VecInt2
+
     val width: Int
         get() = size.x
     val height: Int
@@ -18,9 +20,17 @@ class Board(private val size: VecInt2) {
 
     private val board = mutableListOf<Piece?>()
 
-    init {
+    constructor(size: VecInt2) {
+        this.size = size
         for (i in 0 until size.x * size.y)
             board += null
+    }
+
+    constructor(toCopy: Board) {
+        this.size = toCopy.size
+        for (p in toCopy.board)
+            board += if (p == null) null else Piece(p)
+
     }
 
     fun posToIndex(pos: VecInt2) = pos.x + pos.y * size.x

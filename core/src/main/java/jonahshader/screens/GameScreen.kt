@@ -8,6 +8,7 @@ import jonahshader.systems.engine.*
 import jonahshader.systems.engine.games.makeChessGame
 import jonahshader.systems.engine.playercontrollers.PlayerController
 import jonahshader.systems.engine.playercontrollers.RandomMoveAI
+import jonahshader.systems.engine.playercontrollers.RandomMoveEvalAI
 import jonahshader.systems.math.VecInt2
 import ktx.app.KtxScreen
 import ktx.graphics.begin
@@ -20,7 +21,7 @@ class GameScreen : KtxScreen {
     init {
         val playerControllers = mutableListOf<PlayerController>()
         playerControllers += RandomMoveAI(1f)
-        playerControllers += RandomMoveAI(1f)
+        playerControllers += RandomMoveEvalAI(1)
         game = makeChessGame(playerControllers[0], playerControllers[1], .5f)
 
         boardViewport = FitViewport(Board.TILE_SIZE * game.board.width,

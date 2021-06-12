@@ -5,13 +5,15 @@ import jonahshader.systems.math.VecInt2
 typealias ActionPos = VecInt2
 
 // assuming desired action was either verified by
-// ActionValid or it came from GetAlloValidActions
+// ActionValid or it came from GetAllValidActions
 typealias Action = (BoardGame, ActionPos, Piece, Ability) -> Unit
 typealias ActionValid = (BoardGame, ActionPos, Piece) -> Boolean
 typealias GetAllValidActionPos = (BoardGame, Piece) -> List<ActionPos>
 typealias SpecificAction = (Unit) -> Unit
 data class Ability(var action: Action, var actionValid: ActionValid, var getAllValidActionPos: GetAllValidActionPos) {
     fun makeSpecificAction(game: BoardGame, actionPos: ActionPos, piece: Piece): SpecificAction = {action(game, actionPos, piece, this)}
+
+    constructor(toCopy: Ability): this(toCopy.action, toCopy.actionValid, toCopy.getAllValidActionPos)
 
     companion object {
         // e.g. the knight "jumps" over pieces. bishops do not.
