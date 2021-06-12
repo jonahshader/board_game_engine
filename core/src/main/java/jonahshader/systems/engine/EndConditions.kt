@@ -15,6 +15,21 @@ val noMoveDraw: DrawCondition = {
     draw
 }
 
+fun makeOrDraws(draws: List<DrawCondition>): DrawCondition = {
+    var output = false
+    loop@
+    for (d in draws) if (d(it)) {
+        output = true
+        break@loop
+    }
+    output
+}
+
+fun makeMoveLimitDraw(limit: Int): DrawCondition = {
+    it.totalMoves >= limit
+}
+
+
 val noDraw: DrawCondition = {false}
 
 val missingAllPiecesLoseCondition: LoseCondition = {
@@ -29,11 +44,11 @@ val missingAllPiecesLoseCondition: LoseCondition = {
 }
 
 // if any pieces in this list is missing, that player loses
-fun makePieceCaptureLoseCondition(playerPieces: List<List<Piece>>): LoseCondition = { boardGame ->
+fun makePieceCaptureLoseCondition(playerPieces: List<List<Int>>): LoseCondition = { boardGame ->
     var loser = -1
     playerPieces.forEachIndexed { index, player ->
-        player.forEach { piece ->
-            if (!boardGame.players[index].pieces.contains(piece)) {
+        player.forEach { typeID ->
+            if (0 == boardGame.players[index].pieces.fold(0) { acc: Int, piece: Piece -> acc + if (piece.typeID == typeID) 1 else 0 }) {
                 loser = index
                 return@forEachIndexed
             }

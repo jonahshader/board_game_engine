@@ -4,8 +4,7 @@ import jonahshader.systems.engine.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class RandomMoveEvalAI(private val playerId: Int): PlayerController {
-    private val evalsPerTurn = 1024
+class RandomMoveEvalAI(private val playerId: Int, private val evalsPerTurn: Int): PlayerController {
     private val randomMoveAi = RandomMoveAI(0f)
     override fun requestMove(id: Int, player: Player, game: BoardGame) {
         GlobalScope.launch {
@@ -20,26 +19,45 @@ class RandomMoveEvalAI(private val playerId: Int): PlayerController {
                 }
                 boards[move]!! += BoardGame(game, listOf(randomMoveAi, randomMoveAi))
             }
-            for (g in boards) {
-                g.value.forEach {
-                    it.queueMove(g.key.first.pos, g.key.second)
+            boards.keys.parallelStream().forEach { key ->
+                val value = boards[key]
+                value!!.forEach {
+                    it.queueMove(key.first.pos, key.second)
                     val gameResult = it.finishGame()
-                    if (gameResult < 0) {
-                        moveValues[g.key] = moveValues[g.key]!! + .5f
-                    } else if (gameResult == playerId) {
-                        moveValues[g.key] = moveValues[g.key]!! + .5f
+                    val currentMoveValue = moveValues[key]!!
+//                    if (gameResult < 0) {
+////                        moveValues[key] = currentMoveValue + .33f / it.totalMoves
+//                    } else if (gameResult == playerId) {
+//                        moveValues[key] = currentMoveValue + 1f / it.totalMoves
+//                    }
+                    if (gameResult >= 0) {
+                        if (gameResult == playerId) moveValues[key] = currentMoveValue + 1f / it.totalMoves
+                        else moveValues[key] = currentMoveValue - 2f / it.totalMoves
                     }
                 }
             }
+//            for (g in boards) {
+//                g.value.forEach {
+//                    it.queueMove(g.key.first.pos, g.key.second)
+//                    val gameResult = it.finishGame()
+//                    if (gameResult < 0) {
+//                        moveValues[g.key] = moveValues[g.key]!! + .33f
+//                    } else if (gameResult == playerId) {
+//                        moveValues[g.key] = moveValues[g.key]!! + 1f
+//                    }
+//                }
+//            }
             // find max
             var bestMove = moveValues.keys.first()
-            var bestMoveVal = -1f
+            var bestMoveVal = -100000000f
             for (k in moveValues.keys) {
                 if (moveValues[k]!! > bestMoveVal) {
                     bestMoveVal = moveValues[k]!!
                     bestMove = k
                 }
             }
+
+            println("best move is $bestMove with a score of $bestMoveVal")
 
             // make move
             game.queueMove(bestMove.first.pos, bestMove.second)

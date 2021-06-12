@@ -17,9 +17,10 @@ class BoardGame {
     var loseCondition: LoseCondition
     var drawCondition: DrawCondition
 
-
     private var winner = -1
     private var gameOver = false
+    var totalMoves = 0
+        private set
 
     constructor(size: VecInt2, controllers: List<PlayerController>, moveTime: Float = .25f,
     loseCondition: LoseCondition = missingAllPiecesLoseCondition,
@@ -47,6 +48,9 @@ class BoardGame {
             1 -> Color(.6f, .1f, .1f, 1f)
             else -> Color(.5f, .5f, .5f, 1f)
         })}
+        for (p in board.getPieces()) {
+            players[p.ownerID].addPiece(p)
+        }
     }
 
 
@@ -57,6 +61,7 @@ class BoardGame {
 
 
     fun queueMove(piecePos: VecInt2, movePos: VecInt2) {
+        totalMoves++
         synchronized(moveQueue) {
             moveQueue.add(Pair(piecePos, movePos))
         }
@@ -68,8 +73,8 @@ class BoardGame {
         if (playerTurn >= players.size) playerTurn -= players.size
     }
 
-    fun addPieceToBoard(abilities: MutableList<Ability>, playerID: Int, symbol: String, pos: VecInt2): Piece {
-        val piece = Piece(abilities, playerID, symbol, players[playerID].color, pos)
+    fun addPieceToBoard(abilities: MutableList<Ability>, playerID: Int, typeID: Int, symbol: String, pos: VecInt2): Piece {
+        val piece = Piece(abilities, playerID, typeID, symbol, players[playerID].color, pos)
         players[piece.ownerID].addPiece(piece)
         board.addPiece(piece)
         return piece
@@ -102,8 +107,8 @@ class BoardGame {
                 checkDraw()
                 if (gameOver) {
                     moveQueue.clear()
-                    if (winner == 1)
-                        println("PlayerID $winner won!")
+//                    if (winner == 1)
+//                        println("PlayerID $winner won!")
                     players.forEach { it.notifyGameOver(winner) }
 
                     return@update

@@ -49,4 +49,8 @@ class Board{
             BoardApp.shapeDrawer.filledRectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, if ((x + y) % 2 == 0) darkTileColor else lightTileColor)
         }
     }
+
+    fun getPieces(): List<Piece> {
+        return board.filterNotNull()
+    }
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport
 import jonahshader.BoardApp
 import jonahshader.systems.engine.*
 import jonahshader.systems.engine.games.makeChessGame
+import jonahshader.systems.engine.games.makeGardnerChessGame
 import jonahshader.systems.engine.playercontrollers.PlayerController
 import jonahshader.systems.engine.playercontrollers.RandomMoveAI
 import jonahshader.systems.engine.playercontrollers.RandomMoveEvalAI
@@ -20,9 +21,9 @@ class GameScreen : KtxScreen {
 
     init {
         val playerControllers = mutableListOf<PlayerController>()
+        playerControllers += RandomMoveEvalAI(0, 8192 * 4)
         playerControllers += RandomMoveAI(1f)
-        playerControllers += RandomMoveEvalAI(1)
-        game = makeChessGame(playerControllers[0], playerControllers[1], .5f)
+        game = makeGardnerChessGame(playerControllers[0], playerControllers[1], .5f)
 
         boardViewport = FitViewport(Board.TILE_SIZE * game.board.width,
             Board.TILE_SIZE * game.board.height, boardCamera)

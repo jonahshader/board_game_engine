@@ -22,17 +22,20 @@ class Piece{
 
     val abilities: MutableList<Ability>
     val ownerID: Int
+    val typeID: Int
     private val symbol: String
     private val bodyColor: Color
     val pos: VecInt2
 
     constructor(    abilities: MutableList<Ability>,
                     ownerID: Int,
+                    typeID: Int,
                     symbol: String,
                     bodyColor: Color,
                     pos: VecInt2) {
         this.abilities = abilities
         this.ownerID = ownerID
+        this.typeID = typeID
         this.symbol = symbol
         this.bodyColor = bodyColor
         this.pos = pos
@@ -47,6 +50,7 @@ class Piece{
     constructor(toCopy: Piece) {
         abilities = mutableListOf()
         ownerID = toCopy.ownerID
+        typeID = toCopy.typeID
         symbol = toCopy.symbol
         bodyColor = toCopy.bodyColor
         pos = VecInt2(toCopy.pos)
@@ -132,6 +136,4 @@ class Piece{
             CustomShapes.filledRoundedRect(BoardApp.shapeDrawer, x + padding, y + padding, Board.TILE_SIZE - padding * 2, Board.TILE_SIZE - padding * 2, roundness)
         }
     }
-
-    fun makeCopy() = Piece(abilities, ownerID, symbol, bodyColor, VecInt2(pos))
 }
