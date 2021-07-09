@@ -11,3 +11,19 @@ fun changeAbilityAfterMove(initialAbility: Ability, nextAbility: Ability): Abili
     moddedAbility = Ability(moddedAction, initialAbility.actionValid, initialAbility.getAllValidActionPos)
     return moddedAbility
 }
+// TODO: strange bug where all pawns inherit queen ability when only one of them queens.
+fun changePieceAtRow(initialAbility: Ability, nextPiece: Piece, row: Int): Ability {
+    val moddedAbility: Ability
+    val moddedAction: Action = {game, pos, piece, ability ->
+        initialAbility.action(game, pos, piece, ability)
+        if (pos.y == row) {
+            piece.abilities.clear()
+            piece.abilities += nextPiece.abilities
+            piece.typeID = nextPiece.typeID
+            piece.symbol = nextPiece.symbol
+            piece.value = nextPiece.value
+        }
+    }
+    moddedAbility = Ability(moddedAction, initialAbility.actionValid, initialAbility.getAllValidActionPos)
+    return moddedAbility
+}

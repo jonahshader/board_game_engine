@@ -1,13 +1,11 @@
 package jonahshader.systems.engine.abilities
 
-import jonahshader.systems.engine.Ability
-import jonahshader.systems.engine.Kernel
-import jonahshader.systems.engine.changeAbilityAfterMove
+import jonahshader.systems.engine.*
 import jonahshader.systems.math.VecInt2
 
 // TODO: make pieces able to swap out ability after a condition is met. e.g. pawns will switch move kernels after first move
 // TODO: also need to figure out a general mechanism for enable things like en passant and castling. some interaction with other pieces is required.
-fun makePawnAbilities(white: Boolean): MutableList<Ability> {
+fun makePawnAbilities(white: Boolean, boardSize: VecInt2, queen: Piece): MutableList<Ability> {
     val direction = if (white) 1 else -1
 
     val firstMoveKernel = Kernel(VecInt2(5, 5))
@@ -25,7 +23,9 @@ fun makePawnAbilities(white: Boolean): MutableList<Ability> {
     val secondMoveAbility = Ability.makeJumpMoveAbility(secondMoveKernel)
     val secondCaptureAbility = Ability.makeJumpCaptureAbility(captureKernel)
 
-    val moveAbility = changeAbilityAfterMove(firstMoveAbility, secondMoveAbility)
+    //changeAbilityAfterMove(firstMoveAbility, secondMoveAbility)
+//    val moveAbility = changePieceAtRow(, queen, if (white) boardSize.y - 1 else 0)
+    val moveAbility = changeAbilityAfterMove(firstMoveAbility, changePieceAtRow(secondMoveAbility, queen, if (white) boardSize.y - 1 else 0))
 
     return mutableListOf(moveAbility, secondCaptureAbility)
 }

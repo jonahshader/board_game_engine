@@ -1,10 +1,12 @@
 package jonahshader.systems.engine.playercontrollers
 
-import jonahshader.systems.engine.*
+import jonahshader.systems.engine.BoardGame
+import jonahshader.systems.engine.Move
+import jonahshader.systems.engine.Player
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class RandomMoveEvalAI(private val playerId: Int, private val evalsPerTurn: Int, private val maxDepth: Int, private val subAi0: PlayerController = RandomMoveAI(0f), private val subAi1: PlayerController = RandomMoveAI(0f)): PlayerController {
+class MaterialAI(private val playerId: Int, private val evalsPerTurn: Int, private val depth: Int,  private val subAi0: PlayerController = RandomMoveAI(0f), private val subAi1: PlayerController = RandomMoveAI(0f)): PlayerController {
     override fun requestMove(id: Int, player: Player, game: BoardGame) {
         GlobalScope.launch {
             val boards = HashMap<Move, MutableList<BoardGame>>()
@@ -22,30 +24,20 @@ class RandomMoveEvalAI(private val playerId: Int, private val evalsPerTurn: Int,
                 val value = boards[key]
                 value!!.forEach {
                     it.queueMove(key.first.pos, key.second)
-                    val gameResult = it.finishGame(maxDepth)
-                    val currentMoveValue = moveValues[key]!!
-//                    if (gameResult < 0) {
-////                        moveValues[key] = currentMoveValue + .33f / it.totalMoves
-//                    } else if (gameResult == playerId) {
-//                        moveValues[key] = currentMoveValue + 1f / it.totalMoves
-//                    }
-                    if (gameResult >= 0) {
-                        if (gameResult == playerId) moveValues[key] = currentMoveValue + 1f / (it.totalMoves * boards[key]!!.size)
-                        else moveValues[key] = currentMoveValue - 2f / (it.totalMoves * boards[key]!!.size)
+                    var lastDepth = 1
+                    loop@for (i in 1..depth) {
+                        it.update()
+                        lastDepth = i
+                        if (it.gameOver) break@loop
                     }
+                    var stateMaterialDifference = it.evalMaterialDifference(playerId)
+                    if (stateMaterialDifference < 0) stateMaterialDifference *= 2
+                    val currentMoveValue = moveValues[key]!!
+
+                    moveValues[key] = currentMoveValue + stateMaterialDifference / (lastDepth * boards[key]!!.size)
                 }
             }
-//            for (g in boards) {
-//                g.value.forEach {
-//                    it.queueMove(g.key.first.pos, g.key.second)
-//                    val gameResult = it.finishGame()
-//                    if (gameResult < 0) {
-//                        moveValues[g.key] = moveValues[g.key]!! + .33f
-//                    } else if (gameResult == playerId) {
-//                        moveValues[g.key] = moveValues[g.key]!! + 1f
-//                    }
-//                }
-//            }
+
             // find max
             var bestMove = moveValues.keys.first()
             var bestMoveVal = -100000000f

@@ -11,14 +11,15 @@ import java.util.concurrent.atomic.AtomicReference
 class BoardGame {
     val board: Board
     val players = mutableListOf<Player>()
-    private var playerTurn = 0
+    var playerTurn = 0
+        private set
     private val moveQueue = Collections.synchronizedList(ArrayList<Pair<VecInt2, VecInt2>>())
     private val moveTime: Float
     var loseCondition: LoseCondition
     var drawCondition: DrawCondition
 
     private var winner = -1
-    private var gameOver = false
+    var gameOver = false
     var totalMoves = 0
         private set
 
@@ -43,6 +44,7 @@ class BoardGame {
         drawCondition = toCopy.drawCondition
         playerTurn = toCopy.playerTurn
         board = Board(toCopy.board)
+//        totalMoves = toCopy.totalMoves
         newControllers.forEachIndexed {index, controller -> players += Player(index, controller, this, when(index) {
             0 -> Color(.3f, .9f, .9f, 1f)
             1 -> Color(.6f, .1f, .1f, 1f)
@@ -53,17 +55,21 @@ class BoardGame {
         }
     }
 
-
-
     fun startGame() {
         players[0].requestMove()
     }
-
 
     fun queueMove(piecePos: VecInt2, movePos: VecInt2) {
         totalMoves++
         synchronized(moveQueue) {
             moveQueue.add(Pair(piecePos, movePos))
+        }
+    }
+
+    fun queueMove(move: Move) {
+        totalMoves++
+        synchronized(moveQueue) {
+            moveQueue.add(Pair(move.first.pos, move.second))
         }
     }
 
@@ -73,8 +79,14 @@ class BoardGame {
         if (playerTurn >= players.size) playerTurn -= players.size
     }
 
-    fun addPieceToBoard(abilities: MutableList<Ability>, playerID: Int, typeID: Int, symbol: String, pos: VecInt2): Piece {
-        val piece = Piece(abilities, playerID, typeID, symbol, players[playerID].color, pos)
+    private fun makeMove(move: Move) {
+        move.first.makeMove(move.second, this)
+        playerTurn++
+        if (playerTurn >= players.size) playerTurn -= players.size
+    }
+
+    fun addPieceToBoard(abilities: MutableList<Ability>, playerID: Int, typeID: Int, symbol: String, value: Float, pos: VecInt2): Piece {
+        val piece = Piece(abilities, playerID, typeID, symbol, value, players[playerID].color, pos)
         players[piece.ownerID].addPiece(piece)
         board.addPiece(piece)
         return piece
@@ -92,6 +104,25 @@ class BoardGame {
 
         // draw pieces
         players.forEach { it.draw(viewport, dt, moveTime) }
+    }
+
+    // returns queueNextMove
+    fun updateNoMoveRequest() {
+        synchronized(moveQueue) {
+            if (!gameOver && moveQueue.size == 1) {
+                val it = moveQueue[0]
+                makeMove(it.first, it.second)
+                checkLose()
+                checkWin()
+                checkDraw()
+                if (gameOver) {
+                    moveQueue.clear()
+                    players.forEach { it.notifyGameOver(winner) }
+                    return
+                }
+            }
+            moveQueue.clear()
+        }
     }
 
     fun update() {
@@ -121,14 +152,40 @@ class BoardGame {
         if (!gameOver && queueNextMove) {
             players[playerTurn].requestMove()
         }
-
     }
 
-    fun finishGame(): Int {
-        while (!gameOver) {
+    fun finishGame(maxDepth: Int): Int {
+        while (!gameOver && totalMoves < maxDepth) {
             update()
         }
         return winner
+    }
+
+    fun evalMaterialDifference(player: Int): Float {
+        var materialDiff = 0f
+        for (i in players.indices) {
+            if (i == player) {
+                materialDiff += players[i].getMaterialCount()
+            } else {
+                materialDiff -= players[i].getMaterialCount()
+            }
+        }
+        return materialDiff
+    }
+
+    fun evalMaterialDifference(): Float {
+        if (gameOver && winner < 0) return 0f // tie
+        if (gameOver && winner == 0) return 99999f
+        if (gameOver && winner == 1) return -99999f
+        var materialDiff = 0f
+        for (i in players.indices) {
+            if (i == 0) {
+                materialDiff += players[i].getMaterialCount()
+            } else {
+                materialDiff -= players[i].getMaterialCount()
+            }
+        }
+        return materialDiff
     }
 
     private fun checkDraw() {

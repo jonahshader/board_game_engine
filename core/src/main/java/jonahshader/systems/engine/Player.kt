@@ -30,7 +30,7 @@ class Player(val id: Int, private val controller: PlayerController, private val 
 
     fun draw(viewport: ScalingViewport, dt: Float, moveTime: Float) {
 //        pieces.forEach{it.drawValidMoveTiles(game.board)}
-        pieces.forEach{it.draw(viewport, dt, moveTime)}
+        pieces.forEach{it.draw(viewport, game, dt, moveTime)}
     }
 
     fun addPiece(piece: Piece) {
@@ -49,4 +49,6 @@ class Player(val id: Int, private val controller: PlayerController, private val 
     fun removePiece(toRemove: Piece) {
         rawPieces -= toRemove
     }
+
+    fun getMaterialCount(): Float = rawPieces.fold(0f) {acc, piece -> acc + piece.value}
 }

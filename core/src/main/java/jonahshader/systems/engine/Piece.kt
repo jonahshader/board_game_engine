@@ -19,11 +19,13 @@ class Piece{
     private var moveProgress = 0f
 
     private val textColor = Color(1f, 1f, 1f, 1f)
+    private var selected = false
 
     val abilities: MutableList<Ability>
     val ownerID: Int
-    val typeID: Int
-    private val symbol: String
+    var typeID: Int
+    var symbol: String
+    var value: Float
     private val bodyColor: Color
     val pos: VecInt2
 
@@ -31,12 +33,14 @@ class Piece{
                     ownerID: Int,
                     typeID: Int,
                     symbol: String,
+                    value: Float,
                     bodyColor: Color,
                     pos: VecInt2) {
         this.abilities = abilities
         this.ownerID = ownerID
         this.typeID = typeID
         this.symbol = symbol
+        this.value = value
         this.bodyColor = bodyColor
         this.pos = pos
         pPos = VecInt2(pos)
@@ -52,6 +56,7 @@ class Piece{
         ownerID = toCopy.ownerID
         typeID = toCopy.typeID
         symbol = toCopy.symbol
+        value = toCopy.value
         bodyColor = toCopy.bodyColor
         pos = VecInt2(toCopy.pos)
         pPos = VecInt2(toCopy.pPos)
@@ -102,7 +107,10 @@ class Piece{
         moveProgress = 0f
     }
 
-    fun draw(viewport: ScalingViewport, dt: Float, moveTime: Float) {
+    fun draw(viewport: ScalingViewport, game: BoardGame, dt: Float, moveTime: Float) {
+        if (selected) {
+            drawValidMoveTiles(game)
+        }
         val px = pPos.x * Board.TILE_SIZE
         val py = pPos.y * Board.TILE_SIZE
         val cx = pos.x * Board.TILE_SIZE
@@ -135,5 +143,13 @@ class Piece{
             val y = it.y * Board.TILE_SIZE
             CustomShapes.filledRoundedRect(BoardApp.shapeDrawer, x + padding, y + padding, Board.TILE_SIZE - padding * 2, Board.TILE_SIZE - padding * 2, roundness)
         }
+    }
+
+    fun select() {
+        selected = true
+    }
+
+    fun unselect() {
+        selected = false
     }
 }
