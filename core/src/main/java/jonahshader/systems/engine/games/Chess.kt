@@ -33,12 +33,9 @@ fun makeChessGame(player1Controller: PlayerController, player2Controller: Player
     val queen1 = game.addPieceToBoard(queenAbilities, 1, 10, "Q", 9f, VecInt2(3, 7))
     val king1 = game.addPieceToBoard(kingAbilities, 1, 11, "K", 9999f, VecInt2(4, 7))
 
-    val whitePawnAbilities = makePawnAbilities(true, VecInt2(8, 8), queen0)
-    val blackPawnAbilities = makePawnAbilities(false, VecInt2(8, 8), queen1)
-
     for (i in 0 until 8) {
-        game.addPieceToBoard(whitePawnAbilities, 0, 0, "P",  1f,VecInt2(i, 1))
-        game.addPieceToBoard(blackPawnAbilities, 1, 1, "P", 1f, VecInt2(i, 6))
+        game.addPieceToBoard(makePawnAbilities(true, VecInt2(8, 8), queen0), 0, 0, "P",  1f,VecInt2(i, 1))
+        game.addPieceToBoard(makePawnAbilities(false, VecInt2(8, 8), queen1), 1, 1, "P", 1f, VecInt2(i, 6))
     }
 
     game.loseCondition = makePieceCaptureLoseCondition(listOf(listOf(king0.typeID), listOf(king1.typeID)))

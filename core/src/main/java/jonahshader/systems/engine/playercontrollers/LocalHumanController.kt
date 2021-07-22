@@ -3,6 +3,7 @@ package jonahshader.systems.engine.playercontrollers
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
+import jonahshader.BoardApp
 import jonahshader.systems.engine.Board
 import jonahshader.systems.engine.BoardGame
 import jonahshader.systems.engine.Piece
@@ -17,7 +18,7 @@ class LocalHumanController(private val playerId: Int): PlayerController, KtxInpu
     var viewport: Viewport? = null
 
     init {
-        Gdx.input.inputProcessor = this
+        BoardApp.inputMultiplexer.addProcessor(this)
     }
 
     override fun requestMove(id: Int, player: Player, game: BoardGame) {
@@ -26,7 +27,7 @@ class LocalHumanController(private val playerId: Int): PlayerController, KtxInpu
     }
 
     override fun notifyGameResult(win: Float) {
-
+        BoardApp.inputMultiplexer.removeProcessor(this)
     }
 
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {

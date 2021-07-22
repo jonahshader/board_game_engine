@@ -21,13 +21,15 @@ fun makePawnAbilities(white: Boolean, boardSize: VecInt2, queen: Piece): Mutable
 
     val firstMoveAbility = Ability.makeSlideMoveAbility(listOf(firstMoveKernel))
     val secondMoveAbility = Ability.makeJumpMoveAbility(secondMoveKernel)
-    val secondCaptureAbility = Ability.makeJumpCaptureAbility(captureKernel)
+    val captureAbility = changePieceAtRow(Ability.makeJumpCaptureAbility(captureKernel), queen, if (white) boardSize.y - 1 else 0)
 
     //changeAbilityAfterMove(firstMoveAbility, secondMoveAbility)
 //    val moveAbility = changePieceAtRow(, queen, if (white) boardSize.y - 1 else 0)
+    /*TODO: instead of using changeAbilityAfterMove, just change it when at y=1 or height-1 for white and black respectively.
+        this is how its handled in lichess for custom positions*/
     val moveAbility = changeAbilityAfterMove(firstMoveAbility, changePieceAtRow(secondMoveAbility, queen, if (white) boardSize.y - 1 else 0))
 
-    return mutableListOf(moveAbility, secondCaptureAbility)
+    return mutableListOf(moveAbility, captureAbility)
 }
 
 fun makeRookAbilities(boardSize: Int): MutableList<Ability> {

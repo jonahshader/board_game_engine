@@ -16,12 +16,16 @@ fun changePieceAtRow(initialAbility: Ability, nextPiece: Piece, row: Int): Abili
     val moddedAbility: Ability
     val moddedAction: Action = {game, pos, piece, ability ->
         initialAbility.action(game, pos, piece, ability)
+        println("ran changePieceAtRow. pos.y: ${pos.y}, row: $row")
         if (pos.y == row) {
             piece.abilities.clear()
             piece.abilities += nextPiece.abilities
             piece.typeID = nextPiece.typeID
             piece.symbol = nextPiece.symbol
             piece.value = nextPiece.value
+            println("changed!")
+        } else {
+            println("unchanged!")
         }
     }
     moddedAbility = Ability(moddedAction, initialAbility.actionValid, initialAbility.getAllValidActionPos)

@@ -21,9 +21,11 @@ class GameScreen : KtxScreen {
         val playerControllers = mutableListOf<PlayerController>()
 //        playerControllers += MaterialAI(0, 11920, 5)
         val humanPlayer = LocalHumanController(0)
+        val humanPlayer2 = LocalHumanController(1)
         playerControllers += humanPlayer
+        playerControllers += humanPlayer2
 //        playerControllers += RandomMoveEvalAI(0, 32, 10, RandomMoveEvalAI(0, 50, 10), RandomMoveEvalAI(1, 50, 10))
-        playerControllers += MiniMaxAI(4)
+//        playerControllers += MiniMaxAI(4)
 //        playerControllers += MaterialAI(1, 11920, 6)
 //        playerControllers += RandomMoveAI(1f)
 //        playerControllers += RandomMoveAI(.15f)
@@ -32,6 +34,7 @@ class GameScreen : KtxScreen {
         boardViewport = FitViewport(Board.TILE_SIZE * game.board.width,
             Board.TILE_SIZE * game.board.height, boardCamera)
         humanPlayer.viewport = boardViewport
+        humanPlayer2.viewport = boardViewport
         game.startGame()
     }
 
