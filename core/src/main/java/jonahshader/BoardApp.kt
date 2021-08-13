@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import jonahshader.screens.MenuScreen
-import jonahshader.screens.TextRenderTestScreen
 import jonahshader.systems.assets.Assets
 import jonahshader.systems.screen.ScreenManager
 import space.earlygrey.shapedrawer.ShapeDrawer
