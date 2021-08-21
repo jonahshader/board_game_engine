@@ -50,5 +50,5 @@ class Player(val id: Int, private val controller: PlayerController, private val 
         rawPieces -= toRemove
     }
 
-    fun getMaterialCount(): Float = rawPieces.fold(0f) {acc, piece -> acc + piece.value}
+    fun getMaterialCount(): Float = rawPieces.fold(0f) {acc, piece -> acc + piece.valueFun(piece)}
 }

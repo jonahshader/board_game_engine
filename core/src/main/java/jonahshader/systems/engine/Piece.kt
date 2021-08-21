@@ -25,7 +25,7 @@ class Piece{
     val ownerID: Int
     var typeID: Int
     var symbol: String
-    var value: Float
+    var valueFun: (Piece) -> Float
     private val bodyColor: Color
     val pos: VecInt2
 
@@ -33,14 +33,14 @@ class Piece{
                     ownerID: Int,
                     typeID: Int,
                     symbol: String,
-                    value: Float,
+                    valueFun: (Piece) -> Float,
                     bodyColor: Color,
                     pos: VecInt2) {
         this.abilities = abilities
         this.ownerID = ownerID
         this.typeID = typeID
         this.symbol = symbol
-        this.value = value
+        this.valueFun = valueFun
         this.bodyColor = bodyColor
         this.pos = pos
         pPos = VecInt2(pos)
@@ -56,7 +56,7 @@ class Piece{
         ownerID = toCopy.ownerID
         typeID = toCopy.typeID
         symbol = toCopy.symbol
-        value = toCopy.value
+        valueFun = toCopy.valueFun
         bodyColor = toCopy.bodyColor
         pos = VecInt2(toCopy.pos)
         pPos = VecInt2(toCopy.pPos)

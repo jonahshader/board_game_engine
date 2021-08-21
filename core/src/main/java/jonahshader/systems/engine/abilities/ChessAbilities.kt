@@ -2,6 +2,9 @@ package jonahshader.systems.engine.abilities
 
 import jonahshader.systems.engine.*
 import jonahshader.systems.math.VecInt2
+import kotlin.math.pow
+
+typealias ValueFun = (Piece) -> Float
 
 // TODO: make pieces able to swap out ability after a condition is met. e.g. pawns will switch move kernels after first move
 // TODO: also need to figure out a general mechanism for enable things like en passant and castling. some interaction with other pieces is required.
@@ -32,6 +35,12 @@ fun makePawnAbilities(white: Boolean, boardSize: VecInt2, queen: Piece): Mutable
     return mutableListOf(moveAbility, captureAbility)
 }
 
+fun makePawnValueFun(white: Boolean, boardSize: Int): ValueFun = if (white) { piece ->
+    .8f + (piece.pos.y / (boardSize - 1f)).pow(3) * 1.5f
+} else { piece ->
+    .8f + (((boardSize - 1) -piece.pos.y) / (boardSize - 1f)).pow(3) * 1.5f
+}
+
 fun makeRookAbilities(boardSize: Int): MutableList<Ability> {
     val kernels = mutableListOf<Kernel>()
     kernels += Kernel(VecInt2(boardSize * 2 - 1, boardSize * 2 - 1))
@@ -46,6 +55,8 @@ fun makeRookAbilities(boardSize: Int): MutableList<Ability> {
     return mutableListOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
 }
 
+fun makeRookValueFun(): ValueFun = { _ -> 5f }
+
 fun makeKnightAbilities(): MutableList<Ability> {
     val knightKernel = Kernel(VecInt2(5, 5))
     knightKernel.addMirrored(VecInt2(1, 2), true)
@@ -56,11 +67,18 @@ fun makeKnightAbilities(): MutableList<Ability> {
     return mutableListOf(Ability.makeJumpMoveAbility(knightKernel), Ability.makeJumpCaptureAbility(knightKernel))
 }
 
+fun makeKnightValueFun(boardSize: VecInt2): ValueFun = { piece -> 3f *
+        (if (piece.pos.x == 0 || piece.pos.x == boardSize.x - 1) .9f else 1f) *
+        (if (piece.pos.y == 0 || piece.pos.y == boardSize.y - 1) .9f else 1f)
+}
+
 fun makeKingAbilities(): MutableList<Ability> {
     val kingKernel = Kernel(VecInt2(3, 3))
     kingKernel.fill()
     return mutableListOf(Ability.makeJumpMoveAbility(kingKernel), Ability.makeJumpCaptureAbility(kingKernel))
 }
+
+fun makeKingValueFun(): ValueFun = { _ -> 9999f }
 
 fun makeBishopAbilities(boardSize: Int): MutableList<Ability> {
     val kernels = mutableListOf<Kernel>()
@@ -75,6 +93,8 @@ fun makeBishopAbilities(boardSize: Int): MutableList<Ability> {
 
     return mutableListOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
 }
+
+fun makeBishopValueFun(): ValueFun = { _ -> 3.1f }
 
 fun makeQueenAbilities(boardSize: Int): MutableList<Ability> {
     val kernels = mutableListOf<Kernel>()
@@ -97,3 +117,5 @@ fun makeQueenAbilities(boardSize: Int): MutableList<Ability> {
 
     return mutableListOf(Ability.makeSlideMoveAbility(kernels), Ability.makeSlideCaptureAbility(kernels))
 }
+
+fun makeQueenValueFun(): ValueFun = { _ -> 9f }

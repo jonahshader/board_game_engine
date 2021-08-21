@@ -19,17 +19,19 @@ class GameScreen : KtxScreen {
 
     init {
         val playerControllers = mutableListOf<PlayerController>()
-        playerControllers += MaterialAI(0, 11920, 5)
+//        playerControllers += MaterialAI(0, 11920, 5)
+        playerControllers += MiniMaxAI(6)
 //        val humanPlayer = LocalHumanController(0)
 //        val humanPlayer2 = LocalHumanController(1)
 //        playerControllers += humanPlayer
 //        playerControllers += humanPlayer2
 //        playerControllers += RandomMoveEvalAI(0, 32, 10, RandomMoveEvalAI(0, 50, 10), RandomMoveEvalAI(1, 50, 10))
-        playerControllers += MiniMaxAI(4)
+        playerControllers += MiniMaxAI(6)
 //        playerControllers += MaterialAI(1, 11920, 6)
 //        playerControllers += RandomMoveAI(1f)
 //        playerControllers += RandomMoveAI(.15f)
-        game = makeChessGame(playerControllers[0], playerControllers[1], .5f, 1500)
+//        game = makeChessGame(playerControllers[0], playerControllers[1], .5f, 1500)
+        game = makeGardnerChessGame(playerControllers[0], playerControllers[1], .5f, 1500)
 
         boardViewport = FitViewport(Board.TILE_SIZE * game.board.width,
             Board.TILE_SIZE * game.board.height, boardCamera)

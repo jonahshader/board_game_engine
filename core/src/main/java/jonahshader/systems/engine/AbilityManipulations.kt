@@ -21,7 +21,7 @@ fun changePieceAtRow(initialAbility: Ability, nextPiece: Piece, row: Int): Abili
             piece.abilities += nextPiece.abilities
             piece.typeID = nextPiece.typeID
             piece.symbol = nextPiece.symbol
-            piece.value = nextPiece.value
+            piece.valueFun = nextPiece.valueFun
         }
     }
     moddedAbility = Ability(moddedAction, initialAbility.actionValid, initialAbility.getAllValidActionPos)
